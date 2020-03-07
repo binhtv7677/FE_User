@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // import { withNavigation } from "react-navigation";
 import {
   StyleSheet,
@@ -17,7 +17,7 @@ const { width } = Dimensions.get("screen");
 
 export default Product = props => {
   const navigation = useNavigation();
-
+  const [loaded, setLoad] = useState(false);
   const {
     product,
     horizontal,
@@ -77,7 +77,7 @@ export default Product = props => {
           </TouchableWithoutFeedback>
         </Block> :
           <Block
-            row={horizontal}
+            row={true}
             card
             flex
             style={[styles.product, styles.shadow, style]}
@@ -88,7 +88,16 @@ export default Product = props => {
               }
             >
               <Block flex style={[styles.imageContainer, styles.shadow]}>
-                <Image source={{ uri: product.image }} style={imageStyles} />
+                {loaded ? <>
+                  <Image source={{ uri: "http://45.119.83.107:9002/api/Product/Images?fileName=Files%2FProduct%2F51616270473202054603Bonita.jpg" }} style={imageStyles}
+                  />
+                  <Text>abc</Text>
+                </> :
+                  <>
+                    <Image source={{ uri: "http://45.119.83.107:9002/api/Product/Images?fileName=Files%2FProduct%2F51616270473202054603Bonita.jpg" }} style={imageStyles}
+                      onLoad={() => { setLoad(true) }} />
+                  </>
+                }
               </Block>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback

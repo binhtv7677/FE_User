@@ -28,9 +28,10 @@ export default Home = ({ }) => {
   const gobalState = useContext(gobalStateContext);
   const navigation = useNavigation();
   const [totalProduct, setTotalProduct] = useState(gobalState.gobalState.totalProduct);
-  const [tabsData, setTabsData] = useState({ data: [], index: 1, pageSize: 10 });
+  const [tabsData, setTabsData] = useState([]);
   const [tabId, setTabId] = useState("back");
-  const [getImg, setIMG] = useState(false);
+  const [index, setIndex] = useState(1);
+  const [pageSize, setPage] = useState(5)
   useEffect(() => {
     const focus = navigation.addListener("focus", () => {
       setTotalProduct(gobalState.gobalState.totalProduct);
@@ -38,84 +39,57 @@ export default Home = ({ }) => {
     });
     return focus;
   }, [totalProduct]);
+
   useEffect(() => {
     getData();
   }, [])
+
   async function getData() {
-    setTabsData({ ...tabsData, data: [] })
+    setTabsData([])
     setTotalProduct(gobalState.gobalState.totalProduct);
-    var urlId = GET_PRODUCT.toString() + "?index=" + tabsData.index + "&pageSize=3";
+    var urlId = GET_PRODUCT.toString() + "?index=" + index + "&pageSize=3";
     await GET(urlId, {}, {}).then(res => {
       var data = [];
-      for (let index = 0; index < res.List.length; index++) {
-        data.push(res.List[index]);
+      var url = "http://45.119.83.107:9002/api/Product/Images?fileName=Files%2FProduct%2F51616270473202054603Bonita.jpg";
+      for (let i = 0; i < res.List.length; i++) {
+        res.List[i].MainImage = url;
+        data.push(res.List[i]);
       }
-      setTabsData({ ...tabsData, data: data })
+      setTabsData(data)
     })
   }
-  useEffect(() => {
-    if (getImg) {
-      var data = [...tabsData.data];
-      data.map(item => {
-        if (item.MainImage !== null) {
-          GET_AXIOS(GET_PRODUCT_IMG + item.MainImage).then(res => {
-            item.MainImage = res;
-          })
+
+  async function getItem() {
+    if (tabId !== "back") {
+      var urlId = GET_PRODUCT_TAB_ID + tabId + "/Products?index=1&pageSize=" + pageSize;
+      await GET(urlId, {}, {}).then(res => {
+        var data = [];
+        for (let i = 0; i < res.List.length; i++) {
+          data.push(res.List[i]);
         }
+        setTabsData(data)
+      })
+    } else if (tabId === "back") {
+      var urlId = GET_PRODUCT + "?index=1&pageSize=" + pageSize;
+      await GET(urlId, {}, {}).then(res => {
+        var data = [];
+        for (let i = 0; i < res.List.length; i++) {
+          data.push(res.List[i]);
+        }
+        setTabsData(data)
       })
     }
-
-  }, [getImg])
+  }
   useEffect(() => {
-    async function getItem() {
-      setTabsData({ ...tabsData, index: 1 });
-      setTabsData({ ...tabsData, data: [] })
-      if (tabId !== "back") {
-        var urlId = GET_PRODUCT_TAB_ID.toString() + tabId.toString() + "/Products?index=" + tabsData.index + "&pageSize=" + tabsData.pageSize;
-        await GET(urlId, {}, {}).then(res => {
-          var data = [];
-          for (let index = 0; index < res.List.length; index++) {
-            data.push(res.List[index]);
-          }
-          setTabsData({ ...tabsData, data: data })
-        })
-      } else if (tabId === "back") {
-        var urlId = GET_PRODUCT.toString() + "?index=" + tabsData.index + "&pageSize=3";
-        await GET(urlId, {}, {}).then(res => {
-          var data = [];
-          for (let index = 0; index < res.List.length; index++) {
-            data.push(res.List[index]);
-          }
-          setTabsData({ ...tabsData, data: data })
-        })
-      }
-    }
+    setPage(5);
+    setTabsData([]);
     getItem()
   }, [tabId])
+
   useEffect(() => {
-    async function getItem() {
-      if (tabId !== "back") {
-        var urlId = GET_PRODUCT_TAB_ID.toString() + tabId.toString() + "/Products?index=" + tabsData.index + "&pageSize=" + tabsData.pageSize;
-        await GET(urlId, {}, {}).then(res => {
-          var data = [...tabsData.data];
-          for (let index = 0; index < res.List.length; index++) {
-            data.push(res.List[index]);
-          }
-          setTabsData({ ...tabsData, data: data })
-        })
-      } else if (tabId === "back") {
-        var urlId = GET_PRODUCT.toString() + "?index=" + tabsData.index + "&pageSize=3";
-        await GET(urlId, {}, {}).then(res => {
-          var data = [...tabsData.data];
-          for (let index = 0; index < res.List.length; index++) {
-            data.push(res.List[index]);
-          }
-          setTabsData({ ...tabsData, data: data })
-        })
-      }
-    }
     getItem()
-  }, [tabsData.index])
+  }, [pageSize])
+
   function renderViewNewItem() {
     return (
       <Block
@@ -129,7 +103,7 @@ export default Home = ({ }) => {
         </Block>
 
         <FlatList
-          data={tabsData.data}
+          data={tabsData}
           keyExtractor={item => item.Id.toString()}
           renderItem={item => {
             return (
@@ -149,8 +123,7 @@ export default Home = ({ }) => {
             color={argonTheme.COLORS.SUCCESS}
             textStyle={{ color: argonTheme.COLORS.WHITE }}
             onPress={() => {
-              var index = tabsData.index;
-              setTabsData({ ...tabsData, index: index + 1 })
+              setPage(pre => pre + 5);
             }}
           >
             Xem Thêm
@@ -159,6 +132,7 @@ export default Home = ({ }) => {
       </Block>
     );
   }
+
   return (
     <>
       <View style={{ flex: 1, backgroundColor: "white" }}>
