@@ -48,14 +48,18 @@ export default Home = ({ }) => {
     setTabsData([])
     setTotalProduct(gobalState.gobalState.totalProduct);
     var urlId = GET_PRODUCT.toString() + "?index=" + index + "&pageSize=3";
+
     await GET(urlId, {}, {}).then(res => {
       var data = [];
-      var url = "http://45.119.83.107:9002/api/Product/Images?fileName=Files%2FProduct%2F51616270473202054603Bonita.jpg";
+      var url = "http://45.119.83.107:9002/api/Product/Images?fileName=";
       for (let i = 0; i < res.List.length; i++) {
-        res.List[i].MainImage = url;
-        data.push(res.List[i]);
+        var img = url + res.List[i].MainImage;
+        data.push({ ...res.List[i], img: img });
       }
+      console.log(data)
+
       setTabsData(data)
+
     })
   }
 
@@ -124,6 +128,7 @@ export default Home = ({ }) => {
             textStyle={{ color: argonTheme.COLORS.WHITE }}
             onPress={() => {
               setPage(pre => pre + 5);
+              console.log(tabsData)
             }}
           >
             Xem Thêm

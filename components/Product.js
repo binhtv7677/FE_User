@@ -33,8 +33,7 @@ export default Product = props => {
     full ? styles.fullImage : styles.horizontalImage,
     imageStyle
   ];
-
-
+  var url = "http://45.119.83.107:9002/api/Product/Images?fileName=" + product.MainImage;
   return (
 
     <>
@@ -77,7 +76,7 @@ export default Product = props => {
           </TouchableWithoutFeedback>
         </Block> :
           <Block
-            row={true}
+            row={horizontal}
             card
             flex
             style={[styles.product, styles.shadow, style]}
@@ -89,12 +88,10 @@ export default Product = props => {
             >
               <Block flex style={[styles.imageContainer, styles.shadow]}>
                 {loaded ? <>
-                  <Image source={{ uri: "http://45.119.83.107:9002/api/Product/Images?fileName=Files%2FProduct%2F51616270473202054603Bonita.jpg" }} style={imageStyles}
-                  />
-                  <Text>abc</Text>
+                  <Image source={{ uri: url }} style={imageStyles} />
                 </> :
                   <>
-                    <Image source={{ uri: "http://45.119.83.107:9002/api/Product/Images?fileName=Files%2FProduct%2F51616270473202054603Bonita.jpg" }} style={imageStyles}
+                    <Image source={{ uri: url }} style={imageStyles}
                       onLoad={() => { setLoad(true) }} />
                   </>
                 }

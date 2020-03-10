@@ -20,6 +20,11 @@ export default Cart = ({ props, navigation }) => {
   const [checkSelectAll, setSelectAll] = useState(true);
   const [user, setUser] = useState(gobalState.gobalState.user);
   const [discount, setDiscount] = useState(0);
+  const [loaded, setLoad] = useState(false);
+  const imageStyles = [
+    styles.image,
+    styles.fullImage
+  ];
   navigation.setOptions({
     headerLeft: () => (
       <>
@@ -150,8 +155,6 @@ export default Cart = ({ props, navigation }) => {
   }
   function filterProduct(arr, id) {
     return arr.filter(function (ele) {
-      console.log(ele);
-      console.log(id)
       return ele.Id != id;
     });
   }
@@ -167,6 +170,8 @@ export default Cart = ({ props, navigation }) => {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
   function renderItem(item) {
+    console.log(item)
+    const url = "http://45.119.83.107:9002/api/Product/Images?fileName=" + item.ProductMainImage;
     return (
       <Block
         row
@@ -188,10 +193,16 @@ export default Cart = ({ props, navigation }) => {
         </Block>
         <Block row style={{ width: width * 0.85 }}>
           <Block center style={{ width: width * 0.35 }}>
-            <Image
-              source={{ uri: item.image }}
-              style={{ width: width * 0.35, height: 150 }}
-            />
+            {loaded ? <>
+              <Text>{url}</Text>
+              <Image source={{ uri: url }} />
+            </> :
+              <>
+                <Text>{url}</Text>
+                <Image source={{ uri: url }}
+                  onLoad={() => { setLoad(true) }} />
+              </>
+            }
           </Block>
           <Block
             style={{
