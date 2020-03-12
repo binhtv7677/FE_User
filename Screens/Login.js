@@ -17,7 +17,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import NavigationService from "../service/navigation";
 import * as Facebook from "expo-facebook";
 import * as Google from "expo-google-app-auth";
-import { GET, POST, GET_AXIOS, PUT_AXIOS } from '../enviroments/caller'
+import { GET, POST, GET_AXIOS, PUT_AXIOS, POST_AXIOS } from '../enviroments/caller'
 import { GET_TOKEN_ENDPOINT, CREATE_ACCOUNT_ID, GET_CART, UPDATE_ACCOUNT } from "../enviroments/endpoint";
 import { gobalStateContext } from "../App";
 
@@ -31,10 +31,17 @@ export default Login = ({ route, navigation }) => {
     device_Id: null,
     email: null
   })
+  const [device_id, setDeviceId] = useState("");
   useEffect(() => {
-    setState({ ...state, device_Id: gobalState.gobalState.device_id });
+    getDevice_id();
   }, [])
+  async function getDevice_id() {
+    var device_id = await AsyncStorage.getItem("device_id");
+    setDeviceId(device_id);
+  }
   async function logInFb() {
+
+
     try {
       await Facebook.initializeAsync("1033592917026481");
       const {
@@ -57,13 +64,16 @@ export default Login = ({ route, navigation }) => {
         await POST(GET_TOKEN_ENDPOINT, {}, {}, { account_Id: info.id }).then(res => {
           if (res.Message === "Invalid Account_Id") {
             setState({ ...state, account_Id: info.id, fullname: info.name, email: info.email })
-            POST(CREATE_ACCOUNT_ID, {}, {}, state).then(response => {
-              AsyncStorage.setItem("jwt", response.access_token);
-              gobalState.dispatch({
-                type: "INFO_USER",
-                user: { name: info.name, rank: response.rank }
-              })
-              navigation.navigate("RouterTab");
+            POST_AXIOS(CREATE_ACCOUNT_ID, state).then(response => {
+              if (response.status === 200) {
+                gobalState.dispatch({
+                  type: "INFO_USER",
+                  user: { name: info.name, rank: response.rank }
+                })
+                AsyncStorage.setItem("jwt", response.access_token);
+                navigation.navigate("RouterTab");
+              }
+
             })
           } else {
             AsyncStorage.setItem("jwt", res.access_token);
@@ -71,12 +81,13 @@ export default Login = ({ route, navigation }) => {
               type: "INFO_USER",
               user: { name: info.name, rank: res.rank }
             })
-            if (state.device_Id === res.Device_Id) {
+            if (device_id === res.Device_Id) {
               getDefaltCart();
             }
             else {
-              PUT_AXIOS(UPDATE_ACCOUNT, { fullName: info.name, email: info.email, device_Id: state.device_Id, phoneNumber: null }).then(res => {
-                getDefaltCart();
+              PUT_AXIOS(UPDATE_ACCOUNT, { fullName: info.name, email: info.email, device_Id: device_id, phoneNumber: null }).then(res => {
+                if (res.status === 200)
+                  getDefaltCart();
               })
             }
           }
@@ -120,12 +131,14 @@ export default Login = ({ route, navigation }) => {
               type: "INFO_USER",
               user: { name: user.givenName, rank: res.rank }
             })
-            if (state.device_Id === res.Device_Id) {
+            if (device_id === res.Device_Id) {
               getDefaltCart();
             }
             else {
-              PUT_AXIOS(UPDATE_ACCOUNT, { fullName: user.givenName, email: user.email, device_Id: state.device_Id, phoneNumber: null }).then(res => {
-                getDefaltCart();
+              PUT_AXIOS(UPDATE_ACCOUNT, { fullName: user.givenName, email: user.email, device_Id: device_id, phoneNumber: null }).then(res => {
+                if (res.status === 200) {
+                  getDefaltCart();
+                }
               })
             }
           }
@@ -150,12 +163,14 @@ export default Login = ({ route, navigation }) => {
             type: "INFO_USER",
             user: { name: res.fullname, rank: res.rank }
           })
-          if (state.device_Id === res.Device_Id) {
+          if (device_id === res.Device_Id) {
             getDefaltCart();
           }
           else {
-            PUT_AXIOS(UPDATE_ACCOUNT, { fullName: res.name, email: res.email, device_Id: state.device_Id, phoneNumber: null }).then(res => {
-              getDefaltCart();
+            PUT_AXIOS(UPDATE_ACCOUNT, { fullName: res.name, email: res.email, device_Id: device_id, phoneNumber: null }).then(res => {
+              if (res.status === 200) {
+                getDefaltCart();
+              }
             })
           }
         }

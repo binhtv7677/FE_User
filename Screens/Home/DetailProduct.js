@@ -15,21 +15,20 @@ import { GET_AXIOS, PUT_AXIOS } from "../../enviroments/caller";
 import { GET_CART, GET_PRODUCT_ID, LIKE_PRODUCT } from "../../enviroments/endpoint";
 
 export default DetailProduct = ({ route, navigation }) => {
+  const url = "http://45.119.83.107:9002/api/Product/Images?fileName=";
+
   const detailContext = useContext(gobalStateContext);
   const [like, setLike] = useState(false);
-  const [Product, setProduct] = useState({
-    ...route.params.product,
-    img: [
-      "http://placeimg.com/640/480/any",
-      "http://placeimg.com/640/480/any",
-      "http://placeimg.com/640/480/any"
-    ],
-    isChecked: true
-  });
+  const [img, setIMG] = useState([]);
   const [initProduct, setInintProduct] = useState({});
   useEffect(() => {
     GET_AXIOS(GET_PRODUCT_ID + route.params.product.Id).then(res => {
       setInintProduct(res.data);
+      var arr = [];
+      res.data.Images.map(i => {
+        arr.push(url + i);
+      })
+      setIMG(arr);
     })
   }, [])
   const [total, setTotal] = useState(detailContext.gobalState.totalProduct);
@@ -105,6 +104,20 @@ export default DetailProduct = ({ route, navigation }) => {
     return navigation.navigate("Cart");
   }
 
+  function sendNotifi() {
+    let response = fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      }, body: JSON.stringify({
+        to: "ExponentPushToken[KMh8_BG8-s-zd1luhlakdN]",
+        sound: 'default',
+        title: 'Demo',
+        body: 'Demo notificaiton'
+      })
+    })
+  }
   async function addToCart() {
     var a = await detailContext.dispatch({
       type: "ADD_TO_CART",
@@ -127,7 +140,7 @@ export default DetailProduct = ({ route, navigation }) => {
               height: 250
             }}
           >
-            <ImageSlider images={Product.img} />
+            <ImageSlider images={img} />
           </Block>
           <Block
             row
@@ -199,7 +212,8 @@ export default DetailProduct = ({ route, navigation }) => {
               style={{ ...styles.button }}
               color={argonTheme.COLORS.SUCCESS}
               onPress={() => {
-                addToCart();
+                // addToCart();
+                sendNotifi();
               }}
               textStyle={{ color: argonTheme.COLORS.WHITE }}
             >

@@ -11,7 +11,6 @@ import { Notifications } from "expo";
 import firebase from "firebase";
 import { firebaseConfig } from "./config";
 import { POST } from "./enviroments/caller";
-import { GET_TOKEN_ENDPOINT } from "./enviroments/endpoint";
 
 firebase.initializeApp(firebaseConfig);
 
@@ -19,7 +18,6 @@ function App() {
   initState = {
     cart: [],
     totalProduct: 0,
-    device_id: "",
     checkSMS: false,
     user: {},
     phone: null
@@ -28,7 +26,8 @@ function App() {
 
   useEffect(() => {
     async function getToken() {
-      initState.device_id = await registerForPushNotificationsAsync();
+      var token = await registerForPushNotificationsAsync();
+      AsyncStorage.setItem("device_id", token)
     }
     getToken();
     callNoti();
@@ -38,7 +37,7 @@ function App() {
     var noti = Notifications.addListener(_catchNoti);
   }
   function _catchNoti(noti) {
-    alert(noti.data)
+    alert("Hello")
   }
   const [gobalState, dispatch] = useReducer(reducer, initState);
   console.disableYellowBox = true;
