@@ -110,8 +110,6 @@ export default Login = ({ route, navigation }) => {
       });
       if (result.type === "success") {
         const user = result.user;
-        console.log(user)
-
         await POST(GET_TOKEN_ENDPOINT, {}, {}, { account_Id: user.id }).then(res => {
           if (res.Message === "Invalid Account_Id") {
             setState({ ...state, account_Id: user.id, fullname: user.givenName, email: user.email })

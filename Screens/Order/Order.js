@@ -19,14 +19,40 @@ import { POST_CART, GET_CART, ORDER_CART } from "../../enviroments/endpoint";
 export default Order = ({ route, navigation }) => {
     const state = useContext(gobalStateContext);
     const [totalPrice, setPrice] = useState(route.params.totalPrice);
-    const [user, setUser] = useState({ fullname: "", address: "", note: "", phoneNumber: "" })
+    const [user, setUser] = useState({ fullName: "Trần Văn Bình", address: "928/8 ách mạng tháng 8", note: "" })
 
-    useEffect(() => {
-        setUser({ ...user, phoneNumber: state.gobalState.phone });
-    }, [])
+    // useEffect(() => {
+    //     setUser({ ...user, phoneNumber: state.gobalState.phone });
+    // }, [])
     function handleLeftPress() {
         return navigation.goBack();
     };
+    async function sendNotifi() {
+        var listDevice_Admin = [];
+        await GET_AXIOS("http://45.119.83.107:9002/api/Account/Device_idOfAdmin").then(res => {
+            res.data.Device_Ids.map(i => {
+                if (i !== null) {
+                    listDevice_Admin.push(i);
+                }
+            })
+        })
+        if (listDevice_Admin.length > 0) {
+            listDevice_Admin.map(divice_idAdmin => {
+                let response = fetch("https://exp.host/--/api/v2/push/send", {
+                    method: "POST",
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    }, body: JSON.stringify({
+                        to: divice_idAdmin,
+                        sound: 'default',
+                        title: 'Demo',
+                        body: 'Demo notificaiton'
+                    })
+                })
+            })
+        }
+    }
     async function create() {
         var data = state.gobalState.cart;
         var postData = [];
@@ -34,35 +60,34 @@ export default Order = ({ route, navigation }) => {
             if (item.isChecked)
                 postData.push(item.Id)
         })
-        POST_AXIOS(ORDER_CART, { cartIds: postData, fullName: user.fullName, address: user.address, price: totalPrice, note: user.note, phoneNumber: "" }).then(
-            res => {
-                if (res.status === 200) {
-                    Alert.alert(
-                        "Thông Báo",
-                        "Đặt hàng thành công",
-                        [
-                            {
-                                text: "Xác nhận",
-                                onPress: () => { navigation.navigate("RouterTab") }
-                                ,
-                                style: "cancel"
-                            }
-                        ],
-                        { cancelable: false }
-                    );
-
-                    // fetch('https://exp.host/--/api/v2/push/send', {
-                    //     method: 'POST',
-                    //     headers: {
-                    //         'Accept': 'application/json',
-                    //         'Content-Type': 'application/json',
-                    //     },
-                    //     body: JSON.stringify(messages)
-
-                    // });
-                }
+        var obj = {
+            cartIds: postData
+            , price: totalPrice
+            , ...user, phoneNumber: "+840907269083"
+        }
+        // navigation.navigate("PhoneAuth", {
+        //     data: obj
+        // })
+        POST_AXIOS(ORDER_CART, obj).then(res => {
+            if (res.status === 200) {
+                // sendNotifi();
+                Alert.alert(
+                    "Thông Báo",
+                    "Đặt hàng thành công",
+                    [
+                        {
+                            text: "Xác nhận",
+                            onPress: () => { navigation.navigate("RouterTab") }
+                            ,
+                            style: "cancel"
+                        }
+                    ],
+                    { cancelable: false }
+                );
             }
-        )
+        }).catch(res => {
+            console.log(res);
+        })
     }
     navigation.setOptions({
         headerLeft: () => (
@@ -155,6 +180,33 @@ export default Order = ({ route, navigation }) => {
                             placeholder=""
                         ></TextInput>
                     </Block>
+                    {/* <Block
+                        style={{
+                            paddingHorizontal: theme.SIZES.BASE,
+                            width: width * 0.8,
+                            marginLeft: 10,
+                            marginTop: 15
+                        }}
+                    >
+                        <Text style={{ fontWeight: "normal", color: "#999da1" }}>
+                            Số điện thoại
+              </Text>
+                        <TextInput
+                            keyboardType="numeric"
+                            style={{
+                                width: width * 0.8,
+                                borderBottomColor: "#999da1",
+                                borderBottomWidth: 1,
+                                height: 25
+                            }}
+                            onChangeText={content => {
+                                setUser({ ...user, phoneNumber: content })
+                            }
+                            }
+                            defaultValue={"+84"}
+                        ></TextInput>
+                    </Block>
+                 */}
 
                     <Block
                         style={{
@@ -189,8 +241,9 @@ export default Order = ({ route, navigation }) => {
                     >
                         <Text style={{ fontWeight: "normal", color: "#999da1" }}>
                             Ghi chú
-              </Text>
+                        </Text>
                         <TextInput
+                            multiline={true}
                             style={{
                                 width: width * 0.8,
                                 borderBottomColor: "#999da1",

@@ -3,7 +3,6 @@ import axios from "axios";
 
 
 export const GET_AXIOS = async (endpoint) => {
-  console.log(endpoint)
   const instance = axios.create({
     baseURL: endpoint
   });
@@ -14,7 +13,7 @@ export const GET_AXIOS = async (endpoint) => {
 }
 
 export const POST_AXIOS = async (endpoint, body = {}) => {
-  console.log(body)
+  console.log(body  )
   const instance = axios.create({
     baseURL: endpoint
   });
@@ -25,7 +24,6 @@ export const POST_AXIOS = async (endpoint, body = {}) => {
   return instance.post(null, body);
 }
 export const PUT_AXIOS = async (endpoint, body = {}) => {
-  console.log(body)
   const instance = axios.create({
     baseURL: endpoint
   });
@@ -36,7 +34,6 @@ export const PUT_AXIOS = async (endpoint, body = {}) => {
   return instance.put(null, body);
 }
 export const DELETE_AXIOS = async (endpoint, body = {}) => {
-  console.log(endpoint);
   const instance = axios.create({
     baseURL: endpoint
   });

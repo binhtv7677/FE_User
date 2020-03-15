@@ -2,51 +2,48 @@ import { POST_AXIOS, POST, GET_AXIOS } from "../enviroments/caller";
 import { POST_CART, CHECK_LOGIN_ENDPOINT, GET_CART } from "../enviroments/endpoint";
 import { Alert } from "react-native";
 
+
 export const reducer = (state, action) => {
   switch (action.type) {
-    case "LOAD_CART":
-      state.cart = action.cart;
-      var total = 0;
-      state.cart.map(item => {
-        total += item.Quantity;
-      });
-      state.totalProduct = total;
+    case "GET_CART":
+      if (action.status === "INSERT") {
+        state.cart = [];
+        action.cart.map(item => {
+          state.cart.push({
+            ...item, isChecked: true,
+            productPrice: item.Price / item.Quantity
+          })
+        })
+        Alert.alert(
+          "Thông Báo",
+          "Thêm mới thành công",
+          [
+            {
+              text: "Xác nhận",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel"
+            }
+          ],
+          { cancelable: false }
+        );
+      }
       return state;
     case "ADD_TO_CART":
       if (action.product.Quantity === 0) return state;
-      callApi();
-      async function callApi() {
-        await postCart(action.product)
-      }
-      var check = true;
-      state.cart.forEach(element => {
-        if (element.Id === action.product.Id) {
-          element.Quantity += 1;
-          check = false;
-          return;
-        }
-      });
-      if (check) {
-        GET_AXIOS(GET_CART).then(res => {
-          state.cart = [];
-          res.data.map(item => {
-            state.cart.push({ ...item, productPrice: item.Price / item.Quantity, isChecked: true })
-          });
-        })
-      }
       state.totalProduct += 1;
-      Alert.alert(
-        "Thông Báo",
-        "Thêm mới thành công",
-        [
-          {
-            text: "Xác nhận",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel"
-          }
-        ],
-        { cancelable: false }
-      );
+      postCart(action.product).then(res => {
+        if (res.status === 200) {
+          GET_AXIOS(GET_CART).then(resp => {
+            if (resp.status === 200) {
+              reducer(state, {
+                type: "GET_CART",
+                cart: resp.data,
+                status: "INSERT"
+              })
+            }
+          })
+        }
+      })
       return state;
     case "CACU_TOTAL":
       if (state.cart.length === 0) return state;
@@ -105,31 +102,12 @@ export const reducer = (state, action) => {
   }
 };
 
-function addProduct(arr, product) {
-  var check = true;
-  if (arr.length > 0) {
-    arr.map(item => {
-      if (item.Id === product.Id) {
-        item.Quantity += 1;
-        check = false;
-      }
-    });
-  }
-  if (check) {
-    arr.push(product);
-  }
-  postCart(product)
-  return arr;
-}
+
 async function postCart(product) {
-  await POST_AXIOS(POST_CART, { productId: product.Id, quantity: product.Quantity }).then(res => {
-  })
+  let res = await POST_AXIOS(POST_CART, { productId: product.Id, quantity: product.Quantity })
+  return res;
 }
-async function getCart(product) {
-  GET_AXIOS(GET_CART).then(res => {
-    return res.data;
-  })
-}
+
 function filterProduct(arr, id) {
   return arr.filter(function (ele) {
     return ele.id != id;

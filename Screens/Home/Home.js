@@ -56,8 +56,6 @@ export default Home = ({ }) => {
         var img = url + res.List[i].MainImage;
         data.push({ ...res.List[i], img: img });
       }
-      console.log(data)
-
       setTabsData(data)
 
     })
@@ -128,7 +126,6 @@ export default Home = ({ }) => {
             textStyle={{ color: argonTheme.COLORS.WHITE }}
             onPress={() => {
               setPage(pre => pre + 5);
-              console.log(tabsData)
             }}
           >
             Xem Thêm
@@ -233,7 +230,6 @@ export default Home = ({ }) => {
                 { id: "042edd2d-5ef9-43e7-d462-08d7bd988d47", title: "Áo thun", img: Images.AO_THUN },
               ]}
               onChange={id => {
-                console.log(id)
                 setTabId(id)
               }}
             ></Tabs>

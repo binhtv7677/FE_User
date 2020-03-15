@@ -16,15 +16,13 @@ import { CHECK_LOGIN_ENDPOINT, GET_CART, UPDATE_CART } from "../enviroments/endp
 export default Cart = ({ props, navigation }) => {
   const gobalState = useContext(gobalStateContext);
   const [data, setData] = useState(gobalState.gobalState.cart);
+  console.log(data)
   const [totalPrice, setTotal] = useState(0);
   const [checkSelectAll, setSelectAll] = useState(true);
   const [user, setUser] = useState(gobalState.gobalState.user);
   const [discount, setDiscount] = useState(0);
   const [loaded, setLoad] = useState(false);
-  const imageStyles = [
-    styles.image,
-    styles.fullImage
-  ];
+
   navigation.setOptions({
     headerLeft: () => (
       <>
@@ -170,7 +168,6 @@ export default Cart = ({ props, navigation }) => {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
   function renderItem(item) {
-    console.log(item)
     const url = "http://45.119.83.107:9002/api/Product/Images?fileName=" + item.ProductMainImage;
     return (
       <Block
@@ -194,12 +191,10 @@ export default Cart = ({ props, navigation }) => {
         <Block row style={{ width: width * 0.85 }}>
           <Block center style={{ width: width * 0.35 }}>
             {loaded ? <>
-              <Text>{url}</Text>
-              <Image source={{ uri: url }} />
+              <Image source={{ uri: url }} style={{ width: 150, height: 150 }} />
             </> :
               <>
-                <Text>{url}</Text>
-                <Image source={{ uri: url }}
+                <Image source={{ uri: url }} style={{ width: 150, height: 150 }}
                   onLoad={() => { setLoad(true) }} />
               </>
             }
@@ -315,7 +310,7 @@ export default Cart = ({ props, navigation }) => {
       } else {
         Alert.alert(
           "Thông Báo",
-          "Bạn chưa chọn   sản phẩm đơn hàng nào",
+          "Bạn chưa chọn sản phẩm đơn hàng nào",
           [
             {
               text: "Xác nhận",

@@ -12,7 +12,6 @@ export default DetailOrder = ({ route, navigation }) => {
     const state = useContext(gobalStateContext);
     const [data, setData] = useState();
     const [user, setUser] = useState(state.gobalState.user);
-    console.log(route)
     useEffect(() => {
         GET_AXIOS(GET_ORDER_DETAIL + route.params.OrderId).then(res => {
             setData(res.data);

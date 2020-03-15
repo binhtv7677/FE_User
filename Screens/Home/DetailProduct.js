@@ -104,19 +104,31 @@ export default DetailProduct = ({ route, navigation }) => {
     return navigation.navigate("Cart");
   }
 
-  function sendNotifi() {
-    let response = fetch("https://exp.host/--/api/v2/push/send", {
-      method: "POST",
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      }, body: JSON.stringify({
-        to: "ExponentPushToken[KMh8_BG8-s-zd1luhlakdN]",
-        sound: 'default',
-        title: 'Demo',
-        body: 'Demo notificaiton'
+  async function sendNotifi() {
+    var listDevice_Admin = [];
+    await GET_AXIOS("http://45.119.83.107:9002/api/Account/Device_idOfAdmin").then(res => {
+      res.data.Device_Ids.map(i => {
+        if (i !== null) {
+          listDevice_Admin.push(i);
+        }
       })
     })
+    if (listDevice_Admin.length > 0) {
+      listDevice_Admin.map(divice_idAdmin => {
+        let response = fetch("https://exp.host/--/api/v2/push/send", {
+          method: "POST",
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          }, body: JSON.stringify({
+            to: divice_idAdmin,
+            sound: 'default',
+            title: 'Demo',
+            body: 'Demo notificaiton'
+          })
+        })
+      })
+    }
   }
   async function addToCart() {
     var a = await detailContext.dispatch({
@@ -212,8 +224,7 @@ export default DetailProduct = ({ route, navigation }) => {
               style={{ ...styles.button }}
               color={argonTheme.COLORS.SUCCESS}
               onPress={() => {
-                // addToCart();
-                sendNotifi();
+                addToCart();
               }}
               textStyle={{ color: argonTheme.COLORS.WHITE }}
             >
