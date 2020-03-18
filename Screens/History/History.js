@@ -9,19 +9,15 @@ import {
 } from "react-native";
 import { Block, Button, Checkbox, Text, theme } from "galio-framework";
 import { Images, argonTheme } from "../../constants";
-import { Icon, Input } from "../../components";
+import { Icon, Input, Product } from "../../components";
 const { width, height } = Dimensions.get("screen");
-import { Header, Left } from "native-base";
-import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons"; // 6.2.2
 import { GET_AXIOS } from "../../enviroments/caller";
 import { USER_GET_ORDER } from "../../enviroments/endpoint";
-import { useNavigation } from "@react-navigation/native";
 export default History = ({ props }) => {
-  const navigation = useNavigation()
   const [data, setData] = useState([]);
-  const [value, setValue] = useState(1);
+  const [pageSize, setSize] = useState(5);
   useEffect(() => {
-    GET_AXIOS(USER_GET_ORDER).then(res => {
+    GET_AXIOS(USER_GET_ORDER + pageSize).then(res => {
       setData(res.data.List)
     })
   }, [])
@@ -59,8 +55,7 @@ export default History = ({ props }) => {
             color={argonTheme.COLORS.SUCCESS}
             textStyle={{ color: argonTheme.COLORS.WHITE }}
             onPress={() => {
-              var index = tabsData.index;
-              setTabsData({ ...tabsData, index: index + 1 })
+              setSize(pre => pre + 5);
             }}
           >
             Xem Thêm
@@ -71,7 +66,7 @@ export default History = ({ props }) => {
   }
   return (
     <View style={{ backgroundColor: "white" }}>
-      <Block center s>
+      <Block center >
         {renderViewNewItem()}
       </Block>
     </View>

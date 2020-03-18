@@ -30,9 +30,9 @@ export const reducer = (state, action) => {
       return state;
     case "ADD_TO_CART":
       if (action.product.Quantity === 0) return state;
-      state.totalProduct += 1;
       postCart(action.product).then(res => {
         if (res.status === 200) {
+          state.totalProduct += 1;
           GET_AXIOS(GET_CART).then(resp => {
             if (resp.status === 200) {
               reducer(state, {

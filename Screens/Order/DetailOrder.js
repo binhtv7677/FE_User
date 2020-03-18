@@ -9,8 +9,11 @@ import { GET, POST, GET_AXIOS, POST_AXIOS, PUT_AXIOS } from "../../enviroments/c
 import { CHECK_LOGIN_ENDPOINT, GET_TOKEN_ENDPOINT, UPDATE_CART, GET_ORDER_DETAIL } from "../../enviroments/endpoint";
 import { gobalStateContext } from "../../App";
 export default DetailOrder = ({ route, navigation }) => {
+    const url = "http://45.119.83.107:9002/api/Product/Images?fileName=";
     const state = useContext(gobalStateContext);
-    const [data, setData] = useState();
+    const [data, setData] = useState({
+        CartVMs: []
+    });
     const [user, setUser] = useState(state.gobalState.user);
     useEffect(() => {
         GET_AXIOS(GET_ORDER_DETAIL + route.params.OrderId).then(res => {
@@ -59,6 +62,7 @@ export default DetailOrder = ({ route, navigation }) => {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
     function renderItem(item) {
+        console.log(item);
         return (
             <Block
                 row
@@ -71,13 +75,11 @@ export default DetailOrder = ({ route, navigation }) => {
                     marginBottom: 5
                 }}
             >
-                <Block center style={{ width: width * 0.15 }}>
-                </Block>
-                <Block row style={{ width: width * 0.85 }}>
-                    <Block center style={{ width: width * 0.35 }}>
+                <Block row style={{ width: width }}>
+                    <Block center style={{ width: width * 0.55 }}>
                         <Image
-                            source={{ uri: item.image }}
-                            style={{ width: width * 0.35, height: 150 }}
+                            source={{ uri: url + item.ProductMainImage }}
+                            style={{ width: width * 0.55, height: 150 }}
                         />
                     </Block>
                     <Block
@@ -180,7 +182,7 @@ export default DetailOrder = ({ route, navigation }) => {
                 <Block center>
                     <Text>Tổng tiền : {data.Price}</Text>
                     <Text> Địa chỉ :{data.Address}</Text>
-                    <Text> Người nhận  :{data.Fullname}</Text>
+                    <Text> Người nhận  :{data.FullName}</Text>
                 </Block>
             </Block>
         </View >

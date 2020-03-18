@@ -27,6 +27,6 @@ export const ORDER_CART = `${BASE_URL}/Cart/Order`;
 export const DELETE_CART = `${BASE_URL}/Cart/`;
 
 //user
-export const USER_GET_ORDER = `${BASE_URL}/Order/MySelf?index=1&pageSize=20`;
+export const USER_GET_ORDER = `${BASE_URL}/Order/MySelf?index=1&pageSize=`;
 export const GET_ORDER_DETAIL = `${BASE_URL}/Order/`;
 //http://45.119.83.107:9002/api/Order/MySelf?index=1&pageSize=5

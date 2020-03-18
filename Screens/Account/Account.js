@@ -93,7 +93,7 @@ export default Account = ({ }) => {
           style={{ width: width * 0.9, height: 20, marginTop: 5 }}
         >
           <Block center style={{ height: 30, width: width * 0.3 }}>
-            <Text>Siver</Text>
+            <Text>Member</Text>
           </Block>
           <Block center style={{ height: 30, width: width * 0.3 }}>
             <Text>Gold</Text>

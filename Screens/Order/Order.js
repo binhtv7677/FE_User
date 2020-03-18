@@ -70,7 +70,7 @@ export default Order = ({ route, navigation }) => {
         // })
         POST_AXIOS(ORDER_CART, obj).then(res => {
             if (res.status === 200) {
-                // sendNotifi();
+                sendNotifi();
                 Alert.alert(
                     "Thông Báo",
                     "Đặt hàng thành công",

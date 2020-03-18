@@ -56,6 +56,8 @@ export default Product = props => {
               <Text style={{ marginLeft: 5 }}> - {product.PhoneNumber}</Text>
               <Text>Địa chỉ</Text>
               <Text style={{ marginLeft: 5 }}> - {product.Address}</Text>
+              <Text>Ngày tạo</Text>
+              <Text style={{ marginLeft: 5 }}> - {product.DateCreated}</Text>
             </Block>
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback

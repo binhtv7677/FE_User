@@ -54,7 +54,6 @@ const PhoneAuthentication = ({ route, navigation }) => {
             ...route.params.data,
             phoneNumber: phone
         }
-        console.log(obj)
         POST_AXIOS(ORDER_CART, obj).then(res => {
             if (res.status === 200) {
                 sendNotifi();
@@ -72,6 +71,8 @@ const PhoneAuthentication = ({ route, navigation }) => {
                     { cancelable: false }
                 );
             }
+        }).catch(res => {
+            console.log(res);
         })
     };
 
