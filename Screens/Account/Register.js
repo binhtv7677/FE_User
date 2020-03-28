@@ -1,10 +1,11 @@
-import React, { Component, useState, useContext } from "react";
+import React, { Component, useState, useContext, useEffect } from "react";
 import {
   StyleSheet,
   Dimensions,
   ScrollView,
   TextInput,
-  FlatList
+  FlatList,
+  Alert
 } from "react-native";
 import { Block, Checkbox, Text, theme, NavBar } from "galio-framework";
 import { Images, argonTheme } from "../../constants";
@@ -13,19 +14,45 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const { width, height } = Dimensions.get("screen");
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons"; // 6.2.2
 import { gobalStateContext } from '../../App'
-import { POST } from "../../enviroments/caller";
+import { POST, POST_AXIOS } from "../../enviroments/caller";
 import { CREATE_ACCOUNT_ID } from "../../enviroments/endpoint";
 export default Register = ({ route, navigation }) => {
   const state = useContext(gobalStateContext);
 
-  const [user, setUser] = useState({ username: "", password: "", fullname: "", email: "", device_id: state.gobalState.device_id })
+  const [user, setUser] = useState({ username: "", password: "", fullname: "", email: "", device_id: "" })
   const [tempPwr, setTempPass] = useState("");
+  const [device_id, setDeviceId] = useState("");
+
+  useEffect(() => {
+    getDevice_id();
+  }, [])
+  async function getDevice_id() {
+    var device_id = await AsyncStorage.getItem("device_id");
+    setDeviceId(device_id);
+  }
   function handleLeftPress() {
     return navigation.goBack();
   };
   function create() {
     if (user.password === tempPwr) {
-      POST(CREATE_ACCOUNT_ID, {}, {}, user).then(res => {
+      setUser({ ...user, device_id: device_id });
+      POST_AXIOS(CREATE_ACCOUNT_ID, user).then(res => {
+        if (res.status === 200) {
+          Alert.alert(
+            "Thông Báo",
+            "Tạo tài khoản thành công",
+            [
+              {
+                text: "Xác nhận",
+                onPress: () => handleLeftPress(),
+                style: "cancel"
+              }
+            ],
+            { cancelable: false }
+          );
+        } else {
+          console.log(res)
+        }
       })
     } else {
 

@@ -131,15 +131,14 @@ export default DetailProduct = ({ route, navigation }) => {
     }
   }
   async function addToCart() {
-    var a = await detailContext.dispatch({
+    setTotal(pre => pre + 1);
+    await detailContext.dispatch({
       type: "ADD_TO_CART",
       product: { ...initProduct, Quantity: 1, isChecked: true }
     });
-    setTotal(detailContext.gobalState.totalProduct);
   }
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-
       <ScrollView>
         <Block
           style={{

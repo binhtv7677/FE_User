@@ -2,7 +2,6 @@ import { POST_AXIOS, POST, GET_AXIOS } from "../enviroments/caller";
 import { POST_CART, CHECK_LOGIN_ENDPOINT, GET_CART } from "../enviroments/endpoint";
 import { Alert } from "react-native";
 
-
 export const reducer = (state, action) => {
   switch (action.type) {
     case "GET_CART":
@@ -13,7 +12,7 @@ export const reducer = (state, action) => {
             ...item, isChecked: true,
             productPrice: item.Price / item.Quantity
           })
-        })
+        });
         Alert.alert(
           "Thông Báo",
           "Thêm mới thành công",

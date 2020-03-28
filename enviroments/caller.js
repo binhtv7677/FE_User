@@ -13,7 +13,6 @@ export const GET_AXIOS = async (endpoint) => {
 }
 
 export const POST_AXIOS = async (endpoint, body = {}) => {
-  console.log(body  )
   const instance = axios.create({
     baseURL: endpoint
   });

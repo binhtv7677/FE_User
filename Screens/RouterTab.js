@@ -20,8 +20,6 @@ class HomeScreen extends React.Component {
 export function HistoryScreen() {
   const navigation = useNavigation();
   return (
-    // <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-    // </View>
     <History props={navigation} />
 
   );

@@ -72,8 +72,8 @@
     "reanimated-bottom-sheet": "^1.0.0-alpha.18"
   },
   "devDependencies": {
-    "babel-preset-expo": "~8.0.0",
-    "@babel/core": "^7.0.0"
+    "@babel/core": "^7.0.0",
+    "babel-preset-expo": "~8.0.0"
   },
   "private": true
 }

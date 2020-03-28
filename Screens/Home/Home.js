@@ -103,7 +103,6 @@ export default Home = ({ }) => {
         <Block center style={{ width: width, height: 50 }}>
           <Text size={30}>Danh Sách </Text>
         </Block>
-
         <FlatList
           data={tabsData}
           keyExtractor={item => item.Id.toString()}
@@ -136,8 +135,9 @@ export default Home = ({ }) => {
   }
 
   return (
-    <>
-      <View style={{ flex: 1, backgroundColor: "white" }}>
+    <View style={{ flex: 1, backgroundColor: "white" }}>
+      <ScrollView>
+
         <Header
           style={[
             {
@@ -209,85 +209,83 @@ export default Home = ({ }) => {
             </Block>
           </Left>
         </Header>
-        <ScrollView>
+        <Block
+          center
+          style={{
+            marginTop: 5,
+            marginBottom: 5,
+            width: width * 0.9,
+            height: 100,
+            borderWidth: 0.18
+          }}
+        >
+          <Text style={{ top: -7, backgroundColor: "white" }}>Danh mục</Text>
+          <Tabs
+            data={[
+              { id: "back", title: "Xem lại" },
+              { id: "420e5124-e7e5-4af2-d45f-08d7bd988d47", title: "Quần dài", img: Images.QUAN_DAI },
+              { id: "fa175d1c-f17d-4890-d460-08d7bd988d47", title: "Quần đùi", img: Images.QUAN_DUI },
+              { id: "d1d964da-1923-43df-d461-08d7bd988d47", title: "Áo sơ mi", img: Images.AO_SO_MI },
+              { id: "042edd2d-5ef9-43e7-d462-08d7bd988d47", title: "Áo thun", img: Images.AO_THUN },
+            ]}
+            onChange={id => {
+              setTabId(id)
+            }}
+          ></Tabs>
+        </Block>
+        <Block
+          style={{
+            width: width
+          }}
+        >
           <Block
             center
             style={{
-              marginTop: 5,
-              marginBottom: 5,
-              width: width * 0.9,
-              height: 100,
-              borderWidth: 0.18
+              width: width,
+              height: 250
             }}
           >
-            <Text style={{ top: -7, backgroundColor: "white" }}>Danh mục</Text>
-            <Tabs
-              data={[
-                { id: "back", title: "Xem lại" },
-                { id: "420e5124-e7e5-4af2-d45f-08d7bd988d47", title: "Quần dài", img: Images.QUAN_DAI },
-                { id: "fa175d1c-f17d-4890-d460-08d7bd988d47", title: "Quần đùi", img: Images.QUAN_DUI },
-                { id: "d1d964da-1923-43df-d461-08d7bd988d47", title: "Áo sơ mi", img: Images.AO_SO_MI },
-                { id: "042edd2d-5ef9-43e7-d462-08d7bd988d47", title: "Áo thun", img: Images.AO_THUN },
-              ]}
-              onChange={id => {
-                setTabId(id)
-              }}
-            ></Tabs>
+            <Swiper autoplay={true} style={{ height: 250 }}>
+              <View style={{ flex: 1 }}>
+                <Image
+                  style={{
+                    flex: 1,
+                    height: null,
+                    width: null,
+                    resizeMode: "contain"
+                  }}
+                  source={require("../../assets/3.jpg")}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Image
+                  style={{
+                    flex: 1,
+                    height: null,
+                    width: null,
+                    resizeMode: "contain"
+                  }}
+                  source={require("../../assets/1.jpg")}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Image
+                  style={{
+                    flex: 1,
+                    height: null,
+                    width: null,
+                    resizeMode: "contain"
+                  }}
+                  source={require("../../assets/2.png")}
+                />
+              </View>
+            </Swiper>
           </Block>
-          <Block
-            style={{
-              width: width
-            }}
-          >
-            <Block
-              center
-              style={{
-                width: width,
-                height: 250
-              }}
-            >
-              <Swiper autoplay={true} style={{ height: 250 }}>
-                <View style={{ flex: 1 }}>
-                  <Image
-                    style={{
-                      flex: 1,
-                      height: null,
-                      width: null,
-                      resizeMode: "contain"
-                    }}
-                    source={require("../../assets/3.jpg")}
-                  />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Image
-                    style={{
-                      flex: 1,
-                      height: null,
-                      width: null,
-                      resizeMode: "contain"
-                    }}
-                    source={require("../../assets/1.jpg")}
-                  />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Image
-                    style={{
-                      flex: 1,
-                      height: null,
-                      width: null,
-                      resizeMode: "contain"
-                    }}
-                    source={require("../../assets/2.png")}
-                  />
-                </View>
-              </Swiper>
-            </Block>
+          {renderViewNewItem()}
+        </Block>
+      </ScrollView>
 
-            {renderViewNewItem()}
-          </Block>
-        </ScrollView>
-      </View>
-    </>
+    </View>
   );
 };
 const styles = StyleSheet.create({

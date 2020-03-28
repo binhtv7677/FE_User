@@ -1,4 +1,5 @@
 export const BASE_URL = "http://45.119.83.107:9002/api";
+// export const BASE_URL = "http://localhost:5002/api";
 // Product
 export const CREATE_PRODUCT_ENDPOINT = `${BASE_URL}/Product`;
 export const UPDATE_PRODUCT_ENDPOINT = `${BASE_URL}/Product`;

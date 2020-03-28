@@ -40,8 +40,6 @@ export default Login = ({ route, navigation }) => {
     setDeviceId(device_id);
   }
   async function logInFb() {
-
-
     try {
       await Facebook.initializeAsync("1033592917026481");
       const {
@@ -60,39 +58,49 @@ export default Login = ({ route, navigation }) => {
         );
         // Alert.alert("Logged in!", `Hi ${await response.json()}!`);
         const info = await response.json();
-        console.log(info)
-        await POST(GET_TOKEN_ENDPOINT, {}, {}, { account_Id: info.id }).then(res => {
-          if (res.Message === "Invalid Account_Id") {
-            setState({ ...state, account_Id: info.id, fullname: info.name, email: info.email })
-            POST_AXIOS(CREATE_ACCOUNT_ID, state).then(response => {
-              if (response.status === 200) {
-                gobalState.dispatch({
-                  type: "INFO_USER",
-                  user: { name: info.name, rank: response.rank }
+        try {
+          await POST_AXIOS(GET_TOKEN_ENDPOINT, { account_Id: info.id }).then(res => {
+            if (res.status === 200) {
+              var data = res.data;
+              AsyncStorage.setItem("jwt", data.access_token);
+              gobalState.dispatch({
+                type: "INFO_USER",
+                user: { name: info.name, rank: data.rank }
+              })
+              if (device_id === data.Device_Id) {
+                getDefaltCart();
+              }
+              else {
+                PUT_AXIOS(UPDATE_ACCOUNT, { fullName: info.name, email: info.email, device_Id: device_id, phoneNumber: null }).then(resq => {
+                  if (resq.status === 200)
+                    getDefaltCart();
                 })
-                AsyncStorage.setItem("jwt", response.access_token);
+              }
+            }
+
+          })
+        } catch (error) {
+          POST_AXIOS(CREATE_ACCOUNT_ID, { account_Id: info.id, fullname: info.name, email: info.email }).then(response => {
+            if (response.status === 200) {
+              var data = response.data;
+              gobalState.dispatch({
+                type: "INFO_USER",
+                user: { name: info.name, rank: data.rank }
+              })
+              AsyncStorage.setItem("jwt", data.access_token);
+              if (data.Device_Id !== device_id) {
+                PUT_AXIOS(UPDATE_ACCOUNT, { fullName: info.name, email: info.email, device_Id: device_id, phoneNumber: null }).then(res => {
+                  if (res.status === 200) {
+                    navigation.navigate("RouterTab");
+                  }
+                })
+              } else {
                 navigation.navigate("RouterTab");
               }
-
-            })
-          } else {
-            AsyncStorage.setItem("jwt", res.access_token);
-            gobalState.dispatch({
-              type: "INFO_USER",
-              user: { name: info.name, rank: res.rank }
-            })
-            if (device_id === res.Device_Id) {
-              getDefaltCart();
             }
-            else {
-              PUT_AXIOS(UPDATE_ACCOUNT, { fullName: info.name, email: info.email, device_Id: device_id, phoneNumber: null }).then(res => {
-                if (res.status === 200)
-                  getDefaltCart();
-              })
-            }
-          }
+          })
         }
-        )
+
       } else {
       }
     } catch ({ message }) {
@@ -110,39 +118,49 @@ export default Login = ({ route, navigation }) => {
       });
       if (result.type === "success") {
         const user = result.user;
-        console.log(user);
-        await POST(GET_TOKEN_ENDPOINT, {}, {}, { account_Id: user.id }).then(res => {
-          if (res.Message === "Invalid Account_Id") {
-            setState({ ...state, account_Id: user.id, fullname: user.givenName, email: user.email })
-            POST(CREATE_ACCOUNT_ID, {}, {}, state).then(response => {
-              if (response.access_token.length > 1) {
-                AsyncStorage.setItem("jwt", response.access_token);
-                gobalState.dispatch({
-                  type: "INFO_USER",
-                  user: { name: user.givenName, rank: response.rank }
+        try {
+          await POST_AXIOS(GET_TOKEN_ENDPOINT, { account_Id: user.id }).then(res => {
+            var data = res.data;
+            if (res.status === 200) {
+              AsyncStorage.setItem("jwt", data.access_token);
+              gobalState.dispatch({
+                type: "INFO_USER",
+                user: { name: data.fullname, rank: data.rank }
+              })
+              if (device_id === data.Device_Id) {
+                getDefaltCart();
+              }
+              else {
+                PUT_AXIOS(UPDATE_ACCOUNT, { fullName: user.givenName, email: user.email, device_Id: device_id, phoneNumber: null }).then(resq => {
+                  if (resq.status === 200) {
+                    getDefaltCart();
+                  }
                 })
+              }
+            }
+
+          })
+        } catch (ex) {
+          POST_AXIOS(CREATE_ACCOUNT_ID, { account_Id: user.id, fullname: user.givenName, email: user.email }).then(response => {
+            var data = response.data;
+            if (response.status === 200) {
+              AsyncStorage.setItem("jwt", response.data.access_token);
+              gobalState.dispatch({
+                type: "INFO_USER",
+                user: { name: data.fullname, rank: data.rank }
+              })
+              if (data.Device_Id !== device_id) {
+                PUT_AXIOS(UPDATE_ACCOUNT, { fullName: user.givenName, email: user.email, device_Id: device_id, phoneNumber: null }).then(res => {
+                  if (res.status === 200) {
+                    navigation.navigate("RouterTab");
+                  }
+                })
+              } else {
                 navigation.navigate("RouterTab");
               }
-            })
-          } else {
-            AsyncStorage.setItem("jwt", res.access_token);
-            gobalState.dispatch({
-              type: "INFO_USER",
-              user: { name: user.givenName, rank: res.rank }
-            })
-            if (device_id === res.Device_Id) {
-              getDefaltCart();
             }
-            else {
-              PUT_AXIOS(UPDATE_ACCOUNT, { fullName: user.givenName, email: user.email, device_Id: device_id, phoneNumber: null }).then(res => {
-                if (res.status === 200) {
-                  getDefaltCart();
-                }
-              })
-            }
-          }
-        })
-
+          })
+        }
         return result.accessToken;
       } else {
         return { cancelled: true };
@@ -153,31 +171,30 @@ export default Login = ({ route, navigation }) => {
   };
   async function Login() {
     if (state.uername !== null || state.password !== null) {
-      await POST(GET_TOKEN_ENDPOINT, {}, {}, { username: state.uername, password: state.password }).then(res => {
-        if (res.Message === "Invalid Username") {
-          alert("Sai username hoặc password")
-        } else {
-          AsyncStorage.setItem("jwt", res.access_token);
+      try {
+        await POST_AXIOS(GET_TOKEN_ENDPOINT, { username: state.uername, password: state.password }).then(res => {
+          var data = res.data;
           gobalState.dispatch({
             type: "INFO_USER",
-            user: { name: res.fullname, rank: res.rank }
+            user: { name: data.fullname, rank: data.rank }
           })
-          if (device_id === res.Device_Id) {
+          if (device_id === data.Device_Id) {
             getDefaltCart();
           }
           else {
-            PUT_AXIOS(UPDATE_ACCOUNT, { fullName: res.name, email: res.email, device_Id: device_id, phoneNumber: null }).then(res => {
-              if (res.status === 200) {
+            PUT_AXIOS(UPDATE_ACCOUNT, { fullName: data.name, email: data.email, device_Id: device_id, phoneNumber: null }).then(resq => {
+              if (resq.status === 200) {
                 getDefaltCart();
               }
             })
           }
-        }
-      })
+        })
+      } catch (error) {
+        Alert.alert("sai username hoặc password");
+      }
     } else {
       alert("Vui lòng điền tài khoản và mật khẩu")
     }
-
   }
   async function getDefaltCart() {
     await GET_AXIOS(GET_CART).then(res => {
@@ -187,11 +204,9 @@ export default Login = ({ route, navigation }) => {
           product: { ...element, isChecked: true }
         })
       });
-    })
-    navigation.navigate("RouterTab")
+    });
+    navigation.navigate("RouterTab");
   }
-
-
   return (
     <Block flex middle>
       <StatusBar hidden />
