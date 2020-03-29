@@ -173,11 +173,13 @@ export default Login = ({ route, navigation }) => {
     if (state.uername !== null || state.password !== null) {
       try {
         await POST_AXIOS(GET_TOKEN_ENDPOINT, { username: state.uername, password: state.password }).then(res => {
+          console.log(res);
           var data = res.data;
           gobalState.dispatch({
             type: "INFO_USER",
             user: { name: data.fullname, rank: data.rank }
           })
+          AsyncStorage.setItem("jwt", data.access_token);
           if (device_id === data.Device_Id) {
             getDefaltCart();
           }

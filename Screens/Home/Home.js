@@ -9,7 +9,8 @@ import {
   View,
   Image,
   FlatList,
-  TouchableHighlight
+  TouchableHighlight,
+  AsyncStorage
 } from "react-native";
 import { Block, Button, Checkbox, Text, theme } from "galio-framework";
 import { Images, argonTheme } from "../../constants";
@@ -21,7 +22,7 @@ import { Header, Left } from "native-base";
 import Swiper from "react-native-swiper";
 import { gobalStateContext } from "../../App";
 import { useNavigation } from "@react-navigation/native";
-import { POST, GET, GET_AXIOS } from "../../enviroments/caller";
+import { POST, GET, GET_AXIOS, GET_AXIOS_PARAM } from "../../enviroments/caller";
 import { GET_PRODUCT_TAB_ID, GET_PRODUCT, GET_PRODUCT_IMG } from "../../enviroments/endpoint";
 
 export default Home = ({ }) => {
@@ -32,18 +33,8 @@ export default Home = ({ }) => {
   const [tabId, setTabId] = useState("back");
   const [index, setIndex] = useState(1);
   const [pageSize, setPage] = useState(5)
-  useEffect(() => {
-    const focus = navigation.addListener("focus", () => {
-      setTotalProduct(gobalState.gobalState.totalProduct);
-      getData()
-    });
-    return focus;
-  }, [totalProduct]);
-
-  useEffect(() => {
-    getData();
-  }, [])
-
+  const [search, setValueSearch] = useState('');
+  const [searchList, setListSearch] = useState([]);
   async function getData() {
     setTabsData([])
     setTotalProduct(gobalState.gobalState.totalProduct);
@@ -80,8 +71,23 @@ export default Home = ({ }) => {
         }
         setTabsData(data)
       })
+    } else if (search.length > 0) {
     }
   }
+
+  useEffect(() => {
+    console.log(1);
+    const focus = navigation.addListener("focus", () => {
+      setTotalProduct(gobalState.gobalState.totalProduct);
+      getData()
+    });
+    return focus;
+  }, [totalProduct]);
+
+  useEffect(() => {
+    getData();
+  }, [])
+
   useEffect(() => {
     setPage(5);
     setTabsData([]);
@@ -92,12 +98,25 @@ export default Home = ({ }) => {
     getItem()
   }, [pageSize])
 
+  useEffect(() => {
+    setTimeout(() => {
+      try {
+        GET_AXIOS_PARAM(GET_PRODUCT, { index: 1, pageSize: 5, name: search }).then(res => {
+          setListSearch(res.data.List);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }, 1500);
+  }, [search]);
+
   function renderViewNewItem() {
     return (
       <Block
         style={{
           marginTop: 15,
-          width: width
+          width: width,
+          flex: 1
         }}
       >
         <Block center style={{ width: width, height: 50 }}>
@@ -133,11 +152,51 @@ export default Home = ({ }) => {
       </Block>
     );
   }
-
+  function renderSearchList() {
+    return (
+      <Block
+        style={{
+          marginTop: 15,
+          width: width,
+          flex: 1
+        }}
+      >
+        <Block center style={{ width: width, height: 50 }}>
+          <Text size={30}>Danh Sách </Text>
+        </Block>
+        <FlatList
+          data={searchList}
+          keyExtractor={item => item.Id.toString()}
+          renderItem={item => {
+            return (
+              <Block key={item.item.Id}>
+                <Product
+                  horizontal
+                  product={item.item}
+                  style={{ marginRight: theme.SIZES.BASE }}
+                />
+              </Block>
+            );
+          }}
+        ></FlatList>
+        <Block center>
+          <Button
+            style={{ ...styles.button }}
+            color={argonTheme.COLORS.SUCCESS}
+            textStyle={{ color: argonTheme.COLORS.WHITE }}
+            onPress={() => {
+              setPage(pre => pre + 5);
+            }}
+          >
+            Xem Thêm
+          </Button>
+        </Block>
+      </Block>
+    );
+  }
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
       <ScrollView>
-
         <Header
           style={[
             {
@@ -182,8 +241,11 @@ export default Home = ({ }) => {
                   height: 30
                 }}
                 iconContent={<Block></Block>}
-              ></Input>
 
+                onChangeText={(context) => {
+                  setValueSearch(context);
+                }}
+              ></Input>
               <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
                 <TouchableOpacity
                   onPress={() => {
@@ -281,7 +343,15 @@ export default Home = ({ }) => {
               </View>
             </Swiper>
           </Block>
-          {renderViewNewItem()}
+
+          {search.length > 0 ?
+            <>
+              {renderSearchList()}
+
+            </> :
+            <>
+              {renderViewNewItem()}
+            </>}
         </Block>
       </ScrollView>
 

@@ -11,7 +11,18 @@ export const GET_AXIOS = async (endpoint) => {
   instance.defaults.headers.common['Content-Type'] = "application/json";
   return instance.get();
 }
-
+export const GET_AXIOS_PARAM = async (endpoint, body = {}) => {
+  console.log(body)
+  const instance = axios.create({
+    baseURL: endpoint,
+  });
+  const token = await AsyncStorage.getItem("jwt");
+  instance.defaults.headers.common['Authorization'] = "Bearer  " + token;
+  instance.defaults.headers.common['Content-Type'] = "application/json";
+  return instance.get(null, {
+    params: body
+  });
+}
 export const POST_AXIOS = async (endpoint, body = {}) => {
   const instance = axios.create({
     baseURL: endpoint
