@@ -1,13 +1,11 @@
 import React, { useState, useContext } from 'react';
-import { ScrollView, TextInput, Button, Text, Dimensions } from 'react-native';
+import { ScrollView, TextInput, Button, Text, Dimensions, Alert } from 'react-native';
 import { signInWithPhoneNumber } from '../domain/phoneAuthentication';
 import { gobalStateContext } from "../../../App";
-import { useNavigation } from "@react-navigation/native";
 import { Block } from 'galio-framework';
 import { POST_AXIOS, GET_AXIOS } from '../../../enviroments/caller';
 import { ORDER_CART } from '../../../enviroments/endpoint';
 const { width, height } = Dimensions.get("screen");
-
 const PhoneAuthentication = ({ route, navigation }) => {
     const state = useContext(gobalStateContext);
     const [phone, setPhone] = useState('+84');
@@ -28,6 +26,9 @@ const PhoneAuthentication = ({ route, navigation }) => {
                 }
             })
         })
+        state.dispatch({
+            type: "REMOVE_CART"
+        });
         if (listDevice_Admin.length > 0) {
             listDevice_Admin.map(divice_idAdmin => {
                 let response = fetch("https://exp.host/--/api/v2/push/send", {
@@ -53,7 +54,8 @@ const PhoneAuthentication = ({ route, navigation }) => {
         var obj = {
             ...route.params.data,
             phoneNumber: phone
-        }
+        };
+
         POST_AXIOS(ORDER_CART, obj).then(res => {
             if (res.status === 200) {
                 sendNotifi();

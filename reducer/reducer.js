@@ -25,6 +25,7 @@ export const reducer = (state, action) => {
           ],
           { cancelable: false }
         );
+        reducer(state, "CACU_TOTAL");
       }
       return state;
     case "ADD_TO_CART":
@@ -93,8 +94,9 @@ export const reducer = (state, action) => {
     case "INFO_USER":
       state.user = action.user;
       return state;
-    case "UPDATE_PHONE":
-      state.phone = action.phone;
+    case "REMOVE_CART":
+      state.cart = [];
+      state.totalProduct = 0;
       return state;
     default:
       return state;

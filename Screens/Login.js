@@ -39,6 +39,8 @@ export default Login = ({ route, navigation }) => {
     var device_id = await AsyncStorage.getItem("device_id");
     setDeviceId(device_id);
   }
+
+
   async function logInFb() {
     try {
       await Facebook.initializeAsync("1033592917026481");
@@ -52,11 +54,9 @@ export default Login = ({ route, navigation }) => {
         permissions: ["public_profile", "email"]
       });
       if (type === "success") {
-        // Get the user's name using Facebook's Graph API
         const response = await fetch(
           `https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,picture.type(large)`
         );
-        // Alert.alert("Logged in!", `Hi ${await response.json()}!`);
         const info = await response.json();
         try {
           await POST_AXIOS(GET_TOKEN_ENDPOINT, { account_Id: info.id }).then(res => {
@@ -107,6 +107,7 @@ export default Login = ({ route, navigation }) => {
       alert(`Facebook Login Error: ${message}`);
     }
   }
+
   async function signInWithGoogleAsync() {
     try {
       const result = await Google.logInAsync({
@@ -121,6 +122,7 @@ export default Login = ({ route, navigation }) => {
         try {
           await POST_AXIOS(GET_TOKEN_ENDPOINT, { account_Id: user.id }).then(res => {
             var data = res.data;
+            console.log(data);
             if (res.status === 200) {
               AsyncStorage.setItem("jwt", data.access_token);
               gobalState.dispatch({
@@ -162,6 +164,7 @@ export default Login = ({ route, navigation }) => {
           })
         }
         return result.accessToken;
+
       } else {
         return { cancelled: true };
       }
@@ -169,6 +172,7 @@ export default Login = ({ route, navigation }) => {
       return { error: true };
     }
   };
+
   async function Login() {
     if (state.uername !== null || state.password !== null) {
       try {
@@ -198,6 +202,7 @@ export default Login = ({ route, navigation }) => {
       alert("Vui lòng điền tài khoản và mật khẩu")
     }
   }
+
   async function getDefaltCart() {
     await GET_AXIOS(GET_CART).then(res => {
       res.data.forEach(element => {
@@ -295,6 +300,7 @@ export default Login = ({ route, navigation }) => {
     </Block>
   );
 }
+
 const styles = StyleSheet.create({
   button: {
     width: width - theme.SIZES.BASE * 8,

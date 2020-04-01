@@ -103,7 +103,6 @@ export default DetailProduct = ({ route, navigation }) => {
   function handleRightPress() {
     return navigation.navigate("Cart");
   }
-
   async function sendNotifi() {
     var listDevice_Admin = [];
     await GET_AXIOS("http://45.119.83.107:9002/api/Account/Device_idOfAdmin").then(res => {

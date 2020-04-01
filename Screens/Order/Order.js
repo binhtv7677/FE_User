@@ -15,15 +15,12 @@ const { width, height } = Dimensions.get("screen");
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons"; // 6.2.2
 import { gobalStateContext } from '../../App'
 import { POST, POST_AXIOS, GET, GET_AXIOS } from "../../enviroments/caller";
-import { POST_CART, GET_CART, ORDER_CART } from "../../enviroments/endpoint";
+import { ORDER_CART } from "../../enviroments/endpoint";
 export default Order = ({ route, navigation }) => {
     const state = useContext(gobalStateContext);
     const [totalPrice, setPrice] = useState(route.params.totalPrice);
     const [user, setUser] = useState({ fullName: "Trần Văn Bình", address: "928/8 ách mạng tháng 8", note: "" })
 
-    // useEffect(() => {
-    //     setUser({ ...user, phoneNumber: state.gobalState.phone });
-    // }, [])
     function handleLeftPress() {
         return navigation.goBack();
     };

@@ -37,7 +37,7 @@ function App() {
     var noti = Notifications.addListener(_catchNoti);
   }
   function _catchNoti(noti) {
-    alert("Hello")
+    alert("Thông báo đơn hàng của bạn đã hoàn tất")
   }
   const [gobalState, dispatch] = useReducer(reducer, initState);
   console.disableYellowBox = true;

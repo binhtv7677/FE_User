@@ -72,6 +72,13 @@ export default Home = ({ }) => {
         setTabsData(data)
       })
     } else if (search.length > 0) {
+      try {
+        GET_AXIOS_PARAM(GET_PRODUCT, { index: 1, pageSize: pageSize, name: search }).then(res => {
+          setListSearch(res.data.List);
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 
@@ -347,7 +354,6 @@ export default Home = ({ }) => {
           {search.length > 0 ?
             <>
               {renderSearchList()}
-
             </> :
             <>
               {renderViewNewItem()}
