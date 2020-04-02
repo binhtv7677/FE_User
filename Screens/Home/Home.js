@@ -28,7 +28,7 @@ import { GET_PRODUCT_TAB_ID, GET_PRODUCT, GET_PRODUCT_IMG } from "../../envirome
 export default Home = ({ }) => {
   const gobalState = useContext(gobalStateContext);
   const navigation = useNavigation();
-  const [totalProduct, setTotalProduct] = useState(gobalState.gobalState.totalProduct);
+  const [totalProduct, setTotalProduct] = useState();
   const [tabsData, setTabsData] = useState([]);
   const [tabId, setTabId] = useState("back");
   const [index, setIndex] = useState(1);
@@ -83,16 +83,18 @@ export default Home = ({ }) => {
   }
 
   useEffect(() => {
-    console.log(1);
     const focus = navigation.addListener("focus", () => {
+      gobalState.dispatch({
+        type: "CACU_TOTAL"
+      });
       setTotalProduct(gobalState.gobalState.totalProduct);
-      getData()
     });
     return focus;
   }, [totalProduct]);
 
   useEffect(() => {
     getData();
+    setTotalProduct(gobalState.gobalState.totalProduct);
   }, [])
 
   useEffect(() => {

@@ -13,25 +13,26 @@ export const reducer = (state, action) => {
             productPrice: item.Price / item.Quantity
           })
         });
-        Alert.alert(
-          "Thông Báo",
-          "Thêm mới thành công",
-          [
-            {
-              text: "Xác nhận",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel"
-            }
-          ],
-          { cancelable: false }
-        );
         reducer(state, "CACU_TOTAL");
+
       }
       return state;
     case "ADD_TO_CART":
       if (action.product.Quantity === 0) return state;
       postCart(action.product).then(res => {
         if (res.status === 200) {
+          Alert.alert(
+            "Thông Báo",
+            "Thêm mới thành công",
+            [
+              {
+                text: "Xác nhận",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+              }
+            ],
+            { cancelable: false }
+          );
           state.totalProduct += 1;
           GET_AXIOS(GET_CART).then(resp => {
             if (resp.status === 200) {
@@ -52,6 +53,7 @@ export const reducer = (state, action) => {
         total += item.Quantity;
       });
       state.totalProduct = total;
+      console.log(total);
       return state;
     case "UNSELECT":
       state.cart.map(item => {
@@ -76,9 +78,6 @@ export const reducer = (state, action) => {
           state.totalProduct += item.Quantity;
         }
       });
-      return state;
-    case "SET_DEVICE_ID":
-      state.device_id = action.device_id
       return state;
     case "SET_DEFAULT_CART":
       var price = action.product.Price / action.product.Quantity;

@@ -22,6 +22,7 @@ export default DetailProduct = ({ route, navigation }) => {
   const [img, setIMG] = useState([]);
   const [initProduct, setInintProduct] = useState({});
   useEffect(() => {
+
     GET_AXIOS(GET_PRODUCT_ID + route.params.product.Id).then(res => {
       setInintProduct(res.data);
       var arr = [];
@@ -34,6 +35,9 @@ export default DetailProduct = ({ route, navigation }) => {
   const [total, setTotal] = useState(detailContext.gobalState.totalProduct);
   useEffect(() => {
     const focus = navigation.addListener("focus", () => {
+      detailContext.dispatch({
+        type: "CACU_TOTAL"
+      });
       setTotal(detailContext.gobalState.totalProduct);
     });
     return focus;
@@ -130,11 +134,11 @@ export default DetailProduct = ({ route, navigation }) => {
     }
   }
   async function addToCart() {
-    setTotal(pre => pre + 1);
     await detailContext.dispatch({
       type: "ADD_TO_CART",
       product: { ...initProduct, Quantity: 1, isChecked: true }
     });
+    setTotal(pre => pre + 1);
   }
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>

@@ -18,6 +18,7 @@ export default History = ({ props }) => {
   const [pageSize, setSize] = useState(5);
   useEffect(() => {
     GET_AXIOS(USER_GET_ORDER + pageSize).then(res => {
+      console.log(res.data.List);
       setData(res.data.List)
     })
   }, [])

@@ -119,10 +119,10 @@ export default Login = ({ route, navigation }) => {
       });
       if (result.type === "success") {
         const user = result.user;
+        console.log(result.accessToken);
         try {
           await POST_AXIOS(GET_TOKEN_ENDPOINT, { account_Id: user.id }).then(res => {
             var data = res.data;
-            console.log(data);
             if (res.status === 200) {
               AsyncStorage.setItem("jwt", data.access_token);
               gobalState.dispatch({

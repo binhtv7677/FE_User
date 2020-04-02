@@ -62,29 +62,29 @@ export default Order = ({ route, navigation }) => {
             , price: totalPrice
             , ...user, phoneNumber: "+840907269083"
         }
-        navigation.navigate("PhoneAuth", {
-            data: obj
-        })
-        // POST_AXIOS(ORDER_CART, obj).then(res => {
-        //     if (res.status === 200) {
-        //         sendNotifi();
-        //         Alert.alert(
-        //             "Thông Báo",
-        //             "Đặt hàng thành công",
-        //             [
-        //                 {
-        //                     text: "Xác nhận",
-        //                     onPress: () => { navigation.navigate("RouterTab") }
-        //                     ,
-        //                     style: "cancel"
-        //                 }
-        //             ],
-        //             { cancelable: false }
-        //         );
-        //     }
-        // }).catch(res => {
-        //     console.log(res);
+        // navigation.navigate("PhoneAuth", {
+        //     data: obj
         // })
+        POST_AXIOS(ORDER_CART, obj).then(res => {
+            if (res.status === 200) {
+                sendNotifi();
+                Alert.alert(
+                    "Thông Báo",
+                    "Đặt hàng thành công",
+                    [
+                        {
+                            text: "Xác nhận",
+                            onPress: () => { navigation.navigate("RouterTab") }
+                            ,
+                            style: "cancel"
+                        }
+                    ],
+                    { cancelable: false }
+                );
+            }
+        }).catch(res => {
+            console.log(res);
+        })
     }
     navigation.setOptions({
         headerLeft: () => (

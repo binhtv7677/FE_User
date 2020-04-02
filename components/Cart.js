@@ -16,7 +16,6 @@ import { CHECK_LOGIN_ENDPOINT, GET_CART, UPDATE_CART } from "../enviroments/endp
 export default Cart = ({ props, navigation }) => {
   const gobalState = useContext(gobalStateContext);
   const [data, setData] = useState(gobalState.gobalState.cart);
-  console.log(data)
   const [totalPrice, setTotal] = useState(0);
   const [checkSelectAll, setSelectAll] = useState(true);
   const [user, setUser] = useState(gobalState.gobalState.user);
@@ -57,9 +56,11 @@ export default Cart = ({ props, navigation }) => {
     ),
     headerTitle: props => <Text size={20}>Giỏ Hàng</Text>
   });
+
   function handleLeftPress() {
     return navigation.goBack();
   }
+
   useEffect(() => {
     var total = 0;
     data.map(item => {
@@ -67,6 +68,7 @@ export default Cart = ({ props, navigation }) => {
     });
     setTotal(total);
   }, [data]);
+
   useEffect(() => {
     if (user.rank === "Member") {
       setDiscount(0)
@@ -75,7 +77,20 @@ export default Cart = ({ props, navigation }) => {
     } else {
       setDiscount(10)
     }
+    getCart();
   }, [])
+  async function getCart() {
+    await GET_AXIOS(GET_CART).then(resp => {
+      if (resp.status === 200) {
+        gobalState.dispatch({
+          type: "GET_CART",
+          cart: resp.data,
+          status: "INSERT"
+        });
+      }
+    })
+    setData(gobalState.gobalState.cart);
+  }
   async function isCheck(Id) {
     let newArr = [...data];
     newArr.map(item => {
@@ -157,10 +172,20 @@ export default Cart = ({ props, navigation }) => {
     });
   }
   async function reloadData(id) {
+
+    await GET_AXIOS(GET_CART).then(resp => {
+      if (resp.status === 200) {
+        gobalState.dispatch({
+          type: "GET_CART",
+          cart: resp.data,
+          status: "INSERT"
+        });
+      }
+    })
     var arr = [...data];
-    var newArr = filterProduct(arr, id)
+    var newArr = filterProduct(arr, id);
     setData(newArr);
-    await PUT_AXIOS(UPDATE_CART, { id: id, quantity: quantity }).then(res => {
+    await PUT_AXIOS(UPDATE_CART, { id: id, quantity: 0 }).then(res => {
     })
   }
   function numberWithCommas(item) {
