@@ -27,7 +27,8 @@ function App() {
   useEffect(() => {
     async function getToken() {
       var token = await registerForPushNotificationsAsync();
-      AsyncStorage.setItem("device_id", token)
+      await AsyncStorage.setItem("device_id", token)
+      console.log(token);
     }
     getToken();
     callNoti();
@@ -37,6 +38,8 @@ function App() {
     var noti = Notifications.addListener(_catchNoti);
   }
   function _catchNoti(noti) {
+    alert(noti.data.data);
+    console.log(noti);
   }
   const [gobalState, dispatch] = useReducer(reducer, initState);
   console.disableYellowBox = true;
