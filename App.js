@@ -39,7 +39,6 @@ function App() {
   }
   function _catchNoti(noti) {
     alert(noti.data.data);
-    console.log(noti);
   }
   const [gobalState, dispatch] = useReducer(reducer, initState);
   console.disableYellowBox = true;
