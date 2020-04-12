@@ -12,7 +12,7 @@ export const CREATE_ACCOUNT_ID = `${BASE_URL}/Auth/Register`;
 export const GET_PRODUCT = `${BASE_URL}/Product`;
 export const LIKE_PRODUCT = `${BASE_URL}/Product/`;
 export const UPDATE_ACCOUNT = `${BASE_URL}/Account`;
-export const GET_USER_ACCOUNT = `${BASE_URL}/api/Account/Profile`;
+export const GET_USER_PROFILE = `${BASE_URL}/Account/Profile`;
 
 //
 //Prodcut - Category

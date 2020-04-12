@@ -14,6 +14,7 @@ import materialTheme from "../constants/Theme";
 import { useNavigation } from "@react-navigation/native";
 
 const { width } = Dimensions.get("screen");
+import moment from "moment";
 
 export default Product = props => {
   const navigation = useNavigation();
@@ -57,7 +58,7 @@ export default Product = props => {
               <Text>Địa chỉ</Text>
               <Text style={{ marginLeft: 5 }}> - {product.Address}</Text>
               <Text>Ngày tạo</Text>
-              <Text style={{ marginLeft: 5 }}> - {product.DateCreated}</Text>
+              <Text style={{ marginLeft: 5 }}> - {moment(product.DateCreated).format("DD-MM-YYYY")}</Text>
             </Block>
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback

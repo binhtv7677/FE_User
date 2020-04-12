@@ -12,12 +12,11 @@ import {
   ScrollView
 } from "react-native";
 import { Block, Button, Checkbox, Text, theme } from "galio-framework";
-import { Images, argonTheme } from "../../constants";
 import { Icon, Input, Product } from "../../components";
 const { width, height } = Dimensions.get("screen");
 import { gobalStateContext } from "../../App";
 import { GET_AXIOS } from "../../enviroments/caller";
-import { GET_PRODUCT_LIKE } from "../../enviroments/endpoint";
+import { GET_PRODUCT_LIKE, GET_USER_PROFILE } from "../../enviroments/endpoint";
 import { useNavigation } from "@react-navigation/native";
 
 export default Account = ({ }) => {
@@ -32,8 +31,15 @@ export default Account = ({ }) => {
     })
   }, [number])
   useEffect(() => {
+    GET_AXIOS(GET_USER_PROFILE).then(res => {
+      setUser(res.data);
+    });
     const focus = navigation.addListener("focus", () => {
       setNumber(pre => pre + 1)
+      GET_AXIOS(GET_USER_PROFILE).then(res => {
+        console.log(res.data);
+        setUser(res.data);
+      });
     });
     return focus;
   }, []);
@@ -71,8 +77,8 @@ export default Account = ({ }) => {
   return (
     <Block style={{ backgroundColor: "white", width: width, height: height }}>
       <Block row center middle style={{ width: width, height: 120 }}>
-        <Text size={30}>{user.name}</Text>
-        <Text color={"#ffc107"}> {user.rank} </Text>
+        <Text size={30}>{user.FullName}</Text>
+        <Text color={"#ffc107"}> {user.Rank} </Text>
       </Block>
       <ScrollView>
 
@@ -81,7 +87,7 @@ export default Account = ({ }) => {
           style={{ width: width, height: 40, borderBottomWidth: 0.17 }}
         >
           <Text size={30} color={"red"}>
-            1145 <Text size={18}>điểm</Text>
+            {user.Score} <Text size={18}>điểm</Text>
           </Text>
         </Block>
         <Block center style={{ width: width, height: 40 }}>

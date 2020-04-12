@@ -13,14 +13,22 @@ import { Icon, Input, Product } from "../../components";
 const { width, height } = Dimensions.get("screen");
 import { GET_AXIOS } from "../../enviroments/caller";
 import { USER_GET_ORDER } from "../../enviroments/endpoint";
+import { useNavigation } from "@react-navigation/native";
 export default History = ({ props }) => {
+  const navigation = useNavigation();
+
   const [data, setData] = useState([]);
   const [pageSize, setSize] = useState(5);
   useEffect(() => {
     GET_AXIOS(USER_GET_ORDER + pageSize).then(res => {
-      console.log(res.data.List);
       setData(res.data.List)
-    })
+    });
+    const focus = navigation.addListener("focus", () => {
+      GET_AXIOS(USER_GET_ORDER + pageSize).then(res => {
+        setData(res.data.List)
+      });
+    });
+    return focus;
   }, [])
 
   function renderViewNewItem() {
