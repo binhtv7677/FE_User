@@ -5,7 +5,8 @@ import {
   ScrollView,
   TextInput,
   FlatList,
-  Alert
+  Alert,
+  AsyncStorage
 } from "react-native";
 import { Block, Checkbox, Text, theme, NavBar } from "galio-framework";
 import { Images, argonTheme } from "../../constants";
@@ -28,14 +29,14 @@ export default Register = ({ route, navigation }) => {
   }, [])
   async function getDevice_id() {
     var device_id = await AsyncStorage.getItem("device_id");
-    setDeviceId(device_id);
+    setUser({ ...user, device_id: device_id });
   }
   function handleLeftPress() {
     return navigation.goBack();
   };
   function create() {
     if (user.password === tempPwr) {
-      setUser({ ...user, device_id: device_id });
+      console.log(user);
       POST_AXIOS(CREATE_ACCOUNT_ID, user).then(res => {
         if (res.status === 200) {
           Alert.alert(
@@ -145,8 +146,7 @@ export default Register = ({ route, navigation }) => {
               }}
               onChangeText={content => {
                 setUser({ ...user, username: content })
-              }
-              }
+              }}
               placeholder=""
             ></TextInput>
           </Block>
